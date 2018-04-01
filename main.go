@@ -8,7 +8,7 @@ import (
 	"log"
 	"strconv"
 	"reflect"
-	//"github.com/pborman/uuid"
+	"github.com/pborman/uuid"
 	"strings"
 	"context"
 	"cloud.google.com/go/bigtable"
@@ -31,7 +31,6 @@ const (
 	TYPE = "post"
 	DISTANCE = "200km"
 	// Needs to update
-	id = "com.google.cloud"
 	PROJECT_ID = "refined-spirit-199508"
 	BT_INSTANCE = "around-post"
 	// Needs to update this URL if you deploy it to cloud.
@@ -90,6 +89,11 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	id := uuid.New()
+	// Save to ES.
+	saveToES(&p, id)
+
+
 	ctx := context.Background()
 	// you must update project name here
 	bt_client, err := bigtable.NewClient(ctx, PROJECT_ID, BT_INSTANCE)
@@ -112,10 +116,6 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("Post is saved to BigTable: %s\n", p.Message)
-
-	//id := uuid.New()
-	// Save to ES.
-	//saveToES(&p, id)
 
 }
 
